@@ -29,6 +29,7 @@ angular.module("com.2fdevs.videogular")
                     var tracks;
                     var i;
                     var l;
+                    var trackLoaded = false;
 
                     scope.onLoadMetaData = function() {
                         isMetaDataLoaded = true;
@@ -42,11 +43,12 @@ angular.module("com.2fdevs.videogular")
                         for (i = 0, l = oldTracks.length; i < l; i++) {
                             if (oldTracks[i].remove) {
                                 oldTracks[i].remove();
+                                trackLoaded = false;
                             }
                         }
 
                         // Add new tracks
-                        if (tracks) {
+                        if (tracks && !trackLoaded) {
                             for (i = 0, l = tracks.length; i < l; i++) {
                                 var track = document.createElement('track');
                                 for (var prop in tracks[i]) {
@@ -56,6 +58,9 @@ angular.module("com.2fdevs.videogular")
                                 track.addEventListener('load', scope.onLoadTrack.bind(scope, track));
 
                                 API.mediaElement[0].appendChild(track);
+                                if (document.documentMode) { //IE property
+                                    trackLoaded = true;
+                                }
                             }
                         }
                     };
